@@ -27,6 +27,15 @@
   flex: 1;
 }
 
+.breadcrumb {
+  padding-top: 20px;
+}
+
+.icon {
+  color: var(--base700);
+  margin-inline-end: 1rem;
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -35,10 +44,5 @@
 @media only screen and (max-width: 992px) {
   .header {
     margin-bottom: 10px;
-  }
-
-  .actions {
-    flex-basis: 100%;
-    order: -1;
   }
 }

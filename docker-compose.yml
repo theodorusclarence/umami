@@ -12,7 +12,13 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    init: true
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:3000/api/heartbeat"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   db:
     image: postgres:15-alpine
     environment:

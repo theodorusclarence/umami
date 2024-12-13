@@ -13,7 +13,7 @@ export interface InsightsRequestBody {
     endDate: string;
   };
   fields: { name: string; type: string; label: string }[];
-  filters: { name: string; type: string; filter: string; value: string }[];
+  filters: { name: string; type: string; operator: string; value: string }[];
   groups: { name: string; type: string }[];
 }
 
@@ -42,7 +42,7 @@ const schema = {
       yup.object().shape({
         name: yup.string().required(),
         type: yup.string().required(),
-        filter: yup.string().required(),
+        operator: yup.string().required(),
         value: yup.string().required(),
       }),
     ),
@@ -55,9 +55,9 @@ const schema = {
   }),
 };
 
-function convertFilters(filters) {
-  return filters.reduce((obj, { name, ...value }) => {
-    obj[name] = value;
+function convertFilters(filters: any[]) {
+  return filters.reduce((obj, filter) => {
+    obj[filter.name] = filter;
 
     return obj;
   }, {});
@@ -69,9 +69,7 @@ export default async (
 ) => {
   await useCors(req, res);
   await useAuth(req, res);
-
-  req.yup = schema;
-  await useValidate(req, res);
+  await useValidate(schema, req, res);
 
   if (req.method === 'POST') {
     const {

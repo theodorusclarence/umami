@@ -1,20 +1,19 @@
 .menu {
-  display: flex;
-  flex-flow: row wrap;
-  min-width: 640px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   padding: 10px;
   background: var(--base50);
   z-index: var(--z-index-popup);
   border-radius: 5px;
   border: 1px solid var(--border-color);
-  margin-left: 10px;
+  margin-inline-start: 10px;
 }
 
 .item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: calc(100% / 3);
+  min-width: 200px;
   border-radius: 5px;
   padding: 5px 10px;
 }
@@ -31,4 +30,16 @@
 
 .icon {
   color: var(--primary400);
+}
+
+@media screen and (max-width: 992px) {
+  .menu {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .menu {
+    transform: translateX(40px);
+  }
 }

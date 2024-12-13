@@ -8,7 +8,7 @@ import * as yup from 'yup';
 
 export interface FunnelRequestBody {
   websiteId: string;
-  urls: string[];
+  steps: { type: string; value: string }[];
   window: number;
   dateRange: {
     startDate: string;
@@ -17,7 +17,7 @@ export interface FunnelRequestBody {
 }
 
 export interface FunnelResponse {
-  urls: string[];
+  steps: { type: string; value: string }[];
   window: number;
   startAt: number;
   endAt: number;
@@ -26,7 +26,19 @@ export interface FunnelResponse {
 const schema = {
   POST: yup.object().shape({
     websiteId: yup.string().uuid().required(),
-    urls: yup.array().min(2).of(yup.string()).required(),
+    steps: yup
+      .array()
+      .of(
+        yup.object().shape({
+          type: yup.string().required(),
+          value: yup
+            .string()
+            .matches(/^[a-zA-Z0-9/*-_]+$/, 'Invalid URL pattern')
+            .required(),
+        }),
+      )
+      .min(2)
+      .required(),
     window: yup.number().positive().required(),
     dateRange: yup
       .object()
@@ -44,14 +56,12 @@ export default async (
 ) => {
   await useCors(req, res);
   await useAuth(req, res);
-
-  req.yup = schema;
-  await useValidate(req, res);
+  await useValidate(schema, req, res);
 
   if (req.method === 'POST') {
     const {
       websiteId,
-      urls,
+      steps,
       window,
       dateRange: { startDate, endDate },
     } = req.body;
@@ -63,7 +73,7 @@ export default async (
     const data = await getFunnel(websiteId, {
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      urls,
+      steps,
       windowMinutes: +window,
     });
 

@@ -1,34 +1,26 @@
-import { useCors, useValidate } from 'lib/middleware';
-import { NextApiRequestQueryBody, SearchFilter, TeamSearchFilterType } from 'lib/types';
-import { getFilterValidation } from 'lib/yup';
+import { useAuth, useCors, useValidate } from 'lib/middleware';
+import { NextApiRequestQueryBody } from 'lib/types';
+import { pageInfo } from 'lib/schema';
 import { NextApiResponse } from 'next';
 import { methodNotAllowed } from 'next-basics';
-import userTeams from 'pages/api/users/[id]/teams';
+import userTeamsRoute from 'pages/api/users/[userId]/teams';
 import * as yup from 'yup';
-
-export interface MyTeamsRequestQuery extends SearchFilter<TeamSearchFilterType> {
-  id: string;
-}
 
 const schema = {
   GET: yup.object().shape({
-    ...getFilterValidation(/All|Name|Owner/i),
+    ...pageInfo,
   }),
 };
 
-export default async (
-  req: NextApiRequestQueryBody<MyTeamsRequestQuery, any>,
-  res: NextApiResponse,
-) => {
+export default async (req: NextApiRequestQueryBody, res: NextApiResponse) => {
   await useCors(req, res);
-
-  req.yup = schema;
-  await useValidate(req, res);
+  await useAuth(req, res);
+  await useValidate(schema, req, res);
 
   if (req.method === 'GET') {
-    req.query.id = req.auth.user.id;
+    req.query.userId = req.auth.user.id;
 
-    return userTeams(req, res);
+    return userTeamsRoute(req, res);
   }
 
   return methodNotAllowed(res);

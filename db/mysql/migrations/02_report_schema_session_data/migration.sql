@@ -1,9 +1,9 @@
 -- AlterTable
-ALTER TABLE `event_data` RENAME COLUMN `event_data_type` TO `data_type`;
-ALTER TABLE `event_data` RENAME COLUMN `event_date_value` TO `date_value`;
-ALTER TABLE `event_data` RENAME COLUMN `event_id` TO `event_data_id`;
-ALTER TABLE `event_data` RENAME COLUMN `event_numeric_value` TO `number_value`;
-ALTER TABLE `event_data` RENAME COLUMN `event_string_value` TO `string_value`;
+ALTER TABLE `event_data` CHANGE `event_data_type` `data_type` INTEGER UNSIGNED NOT NULL;
+ALTER TABLE `event_data` CHANGE `event_date_value` `date_value` TIMESTAMP(0) NULL;
+ALTER TABLE `event_data` CHANGE `event_id` `event_data_id` VARCHAR(36) NOT NULL;
+ALTER TABLE `event_data` CHANGE `event_numeric_value` `number_value` DECIMAL(19,4) NULL;
+ALTER TABLE `event_data` CHANGE `event_string_value` `string_value` VARCHAR(500) NULL;
 
 -- CreateTable
 CREATE TABLE `session_data` (
@@ -21,7 +21,7 @@ CREATE TABLE `session_data` (
     INDEX `session_data_website_id_idx`(`website_id`),
     INDEX `session_data_session_id_idx`(`session_id`),
     PRIMARY KEY (`session_data_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `report` (
@@ -41,7 +41,7 @@ CREATE TABLE `report` (
     INDEX `report_type_idx`(`type`),
     INDEX `report_name_idx`(`name`),
     PRIMARY KEY (`report_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- EventData migration
 UPDATE event_data
